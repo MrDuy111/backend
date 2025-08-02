@@ -65,24 +65,42 @@ const generateId = () => {
   return String(maxId + 1)
 }
 
+// None database post version
+// app.post('/api/notes', (request, response) => {
+//   const body = request.body
+
+//   if (!body.content) {
+//     return response.status(400).json({ 
+//       error: 'content missing' 
+//     })
+//   }
+
+//   const note = {
+//     content: body.content,
+//     important: body.important || false,
+//     id: generateId(),
+//   }
+
+//   notes = notes.concat(note)
+
+//   response.json(note)
+// })
+
 app.post('/api/notes', (request, response) => {
   const body = request.body
 
   if (!body.content) {
-    return response.status(400).json({ 
-      error: 'content missing' 
-    })
+    return response.status(400).json({ error: 'content missing' })
   }
 
-  const note = {
+  const note = new Note({
     content: body.content,
     important: body.important || false,
-    id: generateId(),
-  }
+  })
 
-  notes = notes.concat(note)
-
-  response.json(note)
+  note.save().then(savedNote => {
+    response.json(savedNote)
+  })
 })
 
 app.put('/api/notes/:id', (request, response) => {
